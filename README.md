@@ -1,7 +1,6 @@
 # 2a_Stop_and_Wait_Protocol
-
-### Name: VISHAL M.A
-### Reg.NO: 212222230177
+## NAME : VISHAL M.A
+## REG NO : 2122222230177
 ## AIM 
 To write a python program to perform stop and wait protocol
 ## ALGORITHM
@@ -11,41 +10,70 @@ To write a python program to perform stop and wait protocol
 4. To send frames to server from the client side.
 5. If your frames reach the server it will send ACK signal to client
 6. Stop the Program
+   
 ## PROGRAM
-### CLIENT
+
+SERVER:
+
+```import socket
+
+server = socket.socket()
+server.bind(('localhost', 8000))
+server.listen(1)
+print("Server is listening...")
+conn, addr = server.accept()
+print(f"Connected with {addr}")
+
+while True:
+    data = conn.recv(1024).decode()
+
+    if data:
+        print(f"Received: {data}")
+        conn.send("ACK".encode())
+
+        if data.lower() == 'exit':  
+            print("Connection closed by client")
+            conn.close()
+            break
+```
+CLIENT:
+
 ```
 import socket
-s=socket.socket()
-s.bind(('localhost',8000))
-s.listen(5)
-c,addr=s.accept()
+import time
+
+client = socket.socket()
+client.connect(('localhost', 8000))
+client.settimeout(5)  
+
 while True:
- i=input("Enter a data: ")
- c.send(i.encode())
- ack=c.recv(1024).decode()
- if ack:
-   print(ack)
-   continue
- else:
-   c.close()
-   break
+    msg = input("Enter a message (or type 'exit' to quit): ")
+
+    client.send(msg.encode())  
+
+    if msg.lower() == 'exit':  
+        print("Connection closed by client")
+        client.close()
+        break
+
+    try:
+        ack = client.recv(1024).decode()
+        if ack == "ACK":
+            print(f"Server acknowledged: {ack}")
+    except socket.timeout:
+        print("No ACK received, retransmitting...")
+        continue  
 ```
-### SERVER
-```
-import socket
-s=socket.socket()
-s.connect(('localhost',8000))
-while True:
- print(s.recv(1024).decode())
- s.send("Acknowledgement Recived".encode())
-```
+
 ## OUTPUT
-### CLIENT
-![client 1 out](https://github.com/vishal21004/2a_Stop_and_Wait_Protocol/assets/119560110/7fc98006-38bd-48d1-a418-9320456ca1dc)
 
+CLIENT:
 
-### SERVER
-![server out](https://github.com/vishal21004/2a_Stop_and_Wait_Protocol/assets/119560110/68c9d1fe-d82c-4669-8e1b-57a6e0ce9eb3)
+![image](https://github.com/user-attachments/assets/52b51980-0406-4875-996f-538c2e655ed4)
+
+SERVER:
+
+![image](https://github.com/user-attachments/assets/7fcb982f-09e0-4e90-9906-0d2b82886230)
 
 
 ## RESULT
